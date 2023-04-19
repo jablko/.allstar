@@ -1,0 +1,20 @@
+name: Allstar security policies
+on:
+  schedule:
+    # https://crontab.guru/#0_0_*_*_0
+    - cron: 0 0 * * 0
+  workflow_dispatch:
+jobs:
+  enforce:
+    permissions:
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      # https://docs.github.com/en/actions/creating-actions/dockerfile-support-for-github-actions#user
+      - run: chmod o+w .
+      - uses: jablko/allstar-action@HEAD
+        with:
+          token: ${{ secrets.TOKEN }}
+      - uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
